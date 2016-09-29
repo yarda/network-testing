@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+# Stop sendmail service if running
+service sendmail stop || :
+
+mkdir -p /run/fedora-networking || exit 1
+cd /run/fedora-networking
+
+# Enable listening on all interfaces
+pushd /etc/mail
+sed -i 's/\s*,\s*Addr=127.0.0.1\s*//' sendmail.mc
+make sendmail.cf
+popd
+
+exec `which sendmail` -bd -q1h

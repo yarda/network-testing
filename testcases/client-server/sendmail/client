@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+mkdir -p /run/fedora-networking || exit 1
+cd /run/fedora-networking
+
+# Force SMTP to DESTINATION
+pushd /etc/mail
+sed -i "s/\s*FEATURE(\s*\`msp'\s*,.*/FEATURE(\`msp\', \`$DESTINATION\')dnl/" submit.mc
+make submit.cf
+popd
+
+exec `which sendmail` "$USER" < /dev/null
